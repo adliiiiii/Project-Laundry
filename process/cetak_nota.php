@@ -81,6 +81,7 @@ $no_nota = $t['order_id'] ?? 'LRJ-'.str_pad($t['id_transaksi'],4,'0',STR_PAD_LEF
         <div style="font-size:11px;color:#555;margin-top:5px;">Ambil: Estimasi <?= date('d/m/Y',strtotime($t['tanggal_masuk'].' +2 days')) ?> - <?= date('d/m/Y',strtotime($t['tanggal_masuk'].' +3 days')) ?></div>
     </div>
     <div class="footer">Terima Kasih Atas Kepercayaan Anda!</div>
+    <div class="footer">Note : Pembayaran dapat dilakukan setelah baju diambil</div>
     <button class="btn-print" onclick="window.print()">🖨️ Cetak Nota</button>
 </div>
 </body>
