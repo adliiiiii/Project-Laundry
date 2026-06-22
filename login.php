@@ -50,9 +50,7 @@ if (isset($_POST['reset_password'])) {
         $conn->query("UPDATE users SET password = '$new_password' WHERE username = '$reset_username'");
         
         if ($conn->affected_rows > 0) {
-            $success_reset = "✅ Password berhasil diubah! Silakan login dengan password baru.";
-            // Reset form
-            $_POST = [];
+            $success_reset = "✅ Password berhasil diubah! Silakan login.";
         } else {
             $error_reset = 'Username tidak ditemukan.';
         }
@@ -68,131 +66,124 @@ if (isset($_POST['reset_password'])) {
     <link rel="stylesheet" href="style/login.css">
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-box">
-            <!-- HEADER -->
-            <div class="auth-header">
-                <div class="logo">White Clean</div>
-                <h1>Laundry</h1>
-                <p class="subtitle">Handal &amp; Terpercaya</p>
-                <div class="divider"></div>
+    <div class="container">
+        <div class="box">
+            <!-- HEADER - BIRU -->
+            <div class="header">
+                <h1>White Clean</h1>
+                <div class="sub">Laundry Handal &amp; Terpercaya</div>
             </div>
-            
+
             <!-- BODY -->
-            <div class="auth-body">
+            <div class="body">
+                <!-- MESSAGES -->
                 <?php if (!empty($error)): ?>
-                    <div class="alert alert-danger"><?= $error ?></div>
+                    <div class="alert alert-error"><?= $error ?></div>
                 <?php endif; ?>
                 
                 <?php if (!empty($success_reset)): ?>
                     <div class="alert alert-success"><?= $success_reset ?></div>
                 <?php endif; ?>
-                
+
                 <!-- ===== FORM LOGIN ===== -->
                 <div id="formLogin">
                     <form method="POST" action="">
                         <div class="form-group">
-                            <label for="username">Username <span class="required">*</span></label>
+                            <label for="username">Username</label>
                             <input type="text" id="username" name="username" 
                                    placeholder="Masukkan username" 
                                    value="<?= isset($_POST['username']) ? htmlspecialchars($_POST['username']) : '' ?>"
                                    required autofocus>
                         </div>
-                        
+
                         <div class="form-group">
-                            <label for="password">Password <span class="required">*</span></label>
+                            <label for="password">Password</label>
                             <input type="password" id="password" name="password" 
                                    placeholder="Masukkan password" required>
                         </div>
-                        
-                        <div class="form-options">
+
+                        <div class="link">
                             <a onclick="showForgot()">Lupa password?</a>
                         </div>
-                        
-                        <button type="submit" name="login" class="btn-primary">Masuk</button>
+
+                        <button type="submit" name="login" class="btn">Masuk</button>
                     </form>
-                    
                 </div>
-                
+
                 <!-- ===== FORM LUPA PASSWORD ===== -->
-                <div id="formForgot" style="display: none;">
+                <div id="formForgot" class="forgot-box">
                     <form method="POST" action="">
                         <?php if (!empty($error_reset)): ?>
-                            <div class="alert alert-danger"><?= $error_reset ?></div>
+                            <div class="alert alert-error"><?= $error_reset ?></div>
                         <?php endif; ?>
-                        
-                        <p class="info-text">
-                            Masukkan username dan password baru untuk mengganti password.
-                        </p>
-                        
+
+                        <div class="info">
+                            Masukkan username dan password baru.
+                        </div>
+
                         <div class="form-group">
-                            <label for="reset_username">Username <span class="required">*</span></label>
+                            <label for="reset_username">Username</label>
                             <input type="text" id="reset_username" name="reset_username" 
                                    placeholder="Masukkan username" 
                                    value="<?= isset($_POST['reset_username']) ? htmlspecialchars($_POST['reset_username']) : '' ?>"
                                    required>
                         </div>
-                        
+
                         <div class="form-group">
-                            <label for="new_password">Password Baru <span class="required">*</span></label>
+                            <label for="new_password">Password Baru</label>
                             <input type="text" id="new_password" name="new_password" 
                                    placeholder="Masukkan password baru" required>
                         </div>
-                        
+
                         <div class="form-group">
-                            <label for="confirm_password">Konfirmasi Password <span class="required">*</span></label>
+                            <label for="confirm_password">Konfirmasi Password</label>
                             <input type="text" id="confirm_password" name="confirm_password" 
                                    placeholder="Ulangi password baru" required>
                         </div>
-                        
+
                         <div class="btn-group">
-                            <button type="button" onclick="hideForgot()" class="btn-danger">Batal</button>
+                            <button type="button" onclick="hideForgot()" class="btn-secondary">Batal</button>
                             <button type="submit" name="reset_password" class="btn-warning">Ganti Password</button>
                         </div>
                     </form>
                 </div>
-            </div>
-            
-            <!-- FOOTER -->
-            <div class="auth-footer">
-                &copy; <?= date('Y') ?> <span class="brand">White Clean</span> — Semua Pasti Kinclong
+
+                <!-- FOOTER -->
+                <div class="footer">
+                    &copy; <?= date('Y') ?> <span class="brand">White Clean</span>
+                </div>
             </div>
         </div>
     </div>
-    
+
     <script>
         function showForgot() {
             document.getElementById('formLogin').style.display = 'none';
             document.getElementById('formForgot').style.display = 'block';
         }
-        
+
         function hideForgot() {
             document.getElementById('formLogin').style.display = 'block';
             document.getElementById('formForgot').style.display = 'none';
-            // Reset error messages
-            document.querySelectorAll('.alert').forEach(el => el.style.display = 'none');
         }
-        
+
         // Validasi konfirmasi password
         document.addEventListener('DOMContentLoaded', function() {
             const newPass = document.getElementById('new_password');
             const confirmPass = document.getElementById('confirm_password');
-            
+
             if (newPass && confirmPass) {
                 confirmPass.addEventListener('input', function() {
                     if (this.value.length > 0 && this.value !== newPass.value) {
                         this.style.borderColor = '#dc2626';
-                        this.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)';
                     } else if (this.value.length > 0) {
                         this.style.borderColor = '#065f46';
-                        this.style.boxShadow = '0 0 0 3px rgba(6, 95, 70, 0.1)';
                     } else {
-                        this.style.borderColor = '#dce8f5';
-                        this.style.boxShadow = 'none';
+                        this.style.borderColor = '#d0d0d0';
                     }
                 });
             }
-            
+
             <?php if (!empty($error_reset)): ?>
                 showForgot();
             <?php endif; ?>
