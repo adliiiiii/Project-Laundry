@@ -71,11 +71,11 @@ require __DIR__ . '/includes/header.php';
             ?>
                 <tr>
                     <td><strong><?= 'LDR-'.$t['id_transaksi'] ?></strong></td>
-                    <td><?= $t['nama_customer'] ?? '-' ?></td>
-                    <td><?= $t['nama_layanan'] ?? '-' ?></td>
+                    <td><?= htmlspecialchars($t['nama_customer'] ?? '-') ?></td>
+                    <td><?= htmlspecialchars($t['nama_layanan'] ?? '-') ?></td>
                     <td>Rp <?= number_format($t['total_harga'],0,',','.') ?></td>
                     <td><?= $t['tanggal_masuk'] != '0000-00-00' ? date('d/m/Y',strtotime($t['tanggal_masuk'])) : '-' ?></td>
-                    <td><span class="status-badge <?= $badge ?>"><?= $status ?></span></td>
+                    <td><span class="status-badge <?= $badge ?>"><?= htmlspecialchars($status) ?></span></td>
                 </tr>
             <?php endwhile; else: ?>
                 <tr><td colspan="6" class="empty-msg">Belum ada pesanan.</td></tr>
