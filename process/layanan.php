@@ -30,41 +30,30 @@ $basePath   = '../';
 require __DIR__ . '/../includes/header.php';
 ?>
 
-<!-- HALAMAN UTAMA -->
-<div class="panel" style="text-align: center; padding: 50px 20px;">
-    <h2 style="color: #0b2a4a; margin-bottom: 15px; font-weight: 600;">Layanan</h2>
+<!-- ===== HERO SECTION ===== -->
+<div class="hero-section scroll-animate">
+    <div class="badge">🧺 Layanan</div>
+    <h2>Kelola Layanan</h2>
+    <p>Kelola jenis layanan laundry White Clean dengan mudah</p>
+</div>
+
+<!-- ===== PANEL LAYANAN ===== -->
+<div class="panel scroll-animate" style="text-align: center; padding: 40px 20px;">
+    <h3 style="color: #0b2a4a; margin-bottom: 15px; font-weight: 600;">🧺 Layanan Laundry</h3>
     <p style="color: #6b7f8f; margin-bottom: 30px; font-size: 15px;">
-        Klik tombol Lihat untuk melihat daftar layanan.
+        Klik tombol Lihat untuk melihat daftar layanan atau Tambah untuk menambahkan layanan baru.
     </p>
-    <div style="display: flex; gap: 12px; justify-content: center;">
-        <button onclick="bukaModal('modalDaftarLayanan')" style="
-            padding: 10px 28px;
-            font-size: 14px;
-            font-weight: 500;
-            background: #1e6fc7;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        ">
-            Lihat
+    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button onclick="bukaModal('modalDaftarLayanan')" class="btn btn-primary">
+            📋 Lihat Layanan
         </button>
-        <button onclick="bukaModal('modalTambahLayanan')" style="
-            padding: 10px 28px;
-            font-size: 14px;
-            font-weight: 500;
-            background: #22c55e;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        ">
-            Tambah
+        <button onclick="bukaModal('modalTambahLayanan')" class="btn btn-success">
+            ➕ Tambah Layanan
         </button>
     </div>
 </div>
 
-<!-- MODAL DAFTAR LAYANAN (PERSIS GAMBAR) -->
+<!-- MODAL DAFTAR LAYANAN -->
 <div class="modal-overlay" id="modalDaftarLayanan">
     <div class="modal-box" style="max-width: 650px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #dce8f5; padding-bottom: 15px;">
@@ -86,14 +75,13 @@ require __DIR__ . '/../includes/header.php';
             <table style="border-collapse: collapse; width: 100%;">
                 <thead>
                     <tr>
-                        <th style="width: 25%; padding: 12px 15px; text-align: left; background: #dbeafe; color: #0b2a4a; font-weight: 600;">Paket</th>
-                        <th style="width: 40%; padding: 12px 15px; text-align: left; background: #dbeafe; color: #0b2a4a; font-weight: 600;">Layanan</th>
-                        <th style="width: 35%; padding: 12px 15px; text-align: left; background: #dbeafe; color: #0b2a4a; font-weight: 600;">Harga</th>
+                        <th style="width: 25%; padding: 12px 15px; text-align: left; background: rgba(248,250,255,0.6); color: #0b2a4a; font-weight: 600;">Paket</th>
+                        <th style="width: 40%; padding: 12px 15px; text-align: left; background: rgba(248,250,255,0.6); color: #0b2a4a; font-weight: 600;">Layanan</th>
+                        <th style="width: 35%; padding: 12px 15px; text-align: left; background: rgba(248,250,255,0.6); color: #0b2a4a; font-weight: 600;">Harga</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php 
-                    // Ambil data dan kelompokkan berdasarkan paket
                     $query = $conn->query("SELECT * FROM layanan ORDER BY paket, nama_layanan");
                     $groups = [];
                     while ($row = $query->fetch_assoc()) {
@@ -110,10 +98,10 @@ require __DIR__ . '/../includes/header.php';
                         <?php if ($first): ?>
                         <td rowspan="<?= $total ?>" style="
                             vertical-align: middle;
-                            background: #f8faff;
+                            background: rgba(248,250,255,0.3);
                             padding: 14px 15px;
                             border-bottom: 1px solid #e9eff6;
-                            font-weight: 400;
+                            font-weight: 500;
                             color: #0b2a4a;
                         ">
                             <?= htmlspecialchars($paket) ?>
@@ -142,28 +130,11 @@ require __DIR__ . '/../includes/header.php';
             </table>
         </div>
         
-        <!-- TOMBOL EDIT & TUTUP -->
         <div style="display: flex; gap: 12px; margin-top: 22px; justify-content: flex-end; border-top: 1px solid #dce8f5; padding-top: 18px;">
-            <button onclick="tutupModal('modalDaftarLayanan'); bukaModal('modalEditLayanan')" style="
-                padding: 8px 28px;
-                background: #f59e0b;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 14px;
-            ">
-                Edit
+            <button onclick="tutupModal('modalDaftarLayanan'); bukaModal('modalEditLayanan')" class="btn btn-warning">
+                ✏️ Edit
             </button>
-            <button onclick="tutupModal('modalDaftarLayanan')" style="
-                padding: 8px 28px;
-                background: #ef4444;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 14px;
-            ">
+            <button onclick="tutupModal('modalDaftarLayanan')" class="btn btn-danger">
                 Tutup
             </button>
         </div>
@@ -175,49 +146,53 @@ require __DIR__ . '/../includes/header.php';
     <div class="modal-box" style="max-width: 450px;">
         <h3 style="margin-top: 0; margin-bottom: 20px; font-weight: 600; color: #0b2a4a; font-size: 18px;">Tambah Layanan</h3>
         <form method="POST">
-            <label style="display: block; font-weight: 500; color: #0b2a4a; margin-bottom: 5px; font-size: 14px;">Paket</label>
+            <label style="display: block; font-weight: 500; color: #1a3f6b; margin-bottom: 5px; font-size: 13px;">Paket</label>
             <select name="paket" required style="
                 width: 100%; 
-                padding: 8px 12px; 
-                border: 1px solid #dce8f5; 
-                border-radius: 4px; 
+                padding: 9px 12px; 
+                border: 2px solid #e5e7eb; 
+                border-radius: 10px; 
                 margin-bottom: 15px; 
                 font-size: 14px;
                 background: white;
+                font-family: inherit;
             ">
                 <option value="Paket Kiloan">Paket Kiloan</option>
                 <option value="Paket Satuan">Paket Satuan</option>
             </select>
             
-            <label style="display: block; font-weight: 500; color: #0b2a4a; margin-bottom: 5px; font-size: 14px;">Nama Layanan</label>
+            <label style="display: block; font-weight: 500; color: #1a3f6b; margin-bottom: 5px; font-size: 13px;">Nama Layanan</label>
             <input type="text" name="nama_layanan" placeholder="Contoh: Cuci Kering Setrika" required style="
                 width: 100%; 
-                padding: 8px 12px; 
-                border: 1px solid #dce8f5; 
-                border-radius: 4px; 
+                padding: 9px 12px; 
+                border: 2px solid #e5e7eb; 
+                border-radius: 10px; 
                 margin-bottom: 15px; 
                 font-size: 14px;
+                font-family: inherit;
             ">
             
-            <label style="display: block; font-weight: 500; color: #0b2a4a; margin-bottom: 5px; font-size: 14px;">Harga</label>
+            <label style="display: block; font-weight: 500; color: #1a3f6b; margin-bottom: 5px; font-size: 13px;">Harga</label>
             <input type="number" name="harga_kg" placeholder="Contoh: 10000" required min="0" step="500" style="
                 width: 100%; 
-                padding: 8px 12px; 
-                border: 1px solid #dce8f5; 
-                border-radius: 4px; 
+                padding: 9px 12px; 
+                border: 2px solid #e5e7eb; 
+                border-radius: 10px; 
                 margin-bottom: 15px; 
                 font-size: 14px;
+                font-family: inherit;
             ">
             
-            <label style="display: block; font-weight: 500; color: #0b2a4a; margin-bottom: 5px; font-size: 14px;">Satuan</label>
+            <label style="display: block; font-weight: 500; color: #1a3f6b; margin-bottom: 5px; font-size: 13px;">Satuan</label>
             <select name="satuan" required style="
                 width: 100%; 
-                padding: 8px 12px; 
-                border: 1px solid #dce8f5; 
-                border-radius: 4px; 
+                padding: 9px 12px; 
+                border: 2px solid #e5e7eb; 
+                border-radius: 10px; 
                 margin-bottom: 20px; 
                 font-size: 14px;
                 background: white;
+                font-family: inherit;
             ">
                 <option value="kg">kg</option>
                 <option value="potong">potong</option>
@@ -225,28 +200,8 @@ require __DIR__ . '/../includes/header.php';
             </select>
             
             <div style="display: flex; gap: 10px; justify-content: flex-end; border-top: 1px solid #e9eff6; padding-top: 20px;">
-                <button type="button" onclick="tutupModal('modalTambahLayanan')" style="
-                    padding: 8px 20px;
-                    font-size: 13px;
-                    background: #ef4444;
-                    color: white;
-                    border: none;
-                    border-radius: 4px;
-                    cursor: pointer;
-                ">
-                    Batal
-                </button>
-                <button type="submit" name="tambah_layanan" style="
-                    padding: 8px 20px;
-                    font-size: 13px;
-                    background: #22c55e;
-                    color: white;
-                    border: none;
-                    border-radius: 4px;
-                    cursor: pointer;
-                ">
-                    Simpan
-                </button>
+                <button type="button" class="btn btn-danger" onclick="tutupModal('modalTambahLayanan')">Batal</button>
+                <button type="submit" name="tambah_layanan" class="btn btn-success">Simpan</button>
             </div>
         </form>
     </div>
@@ -257,15 +212,16 @@ require __DIR__ . '/../includes/header.php';
     <div class="modal-box" style="max-width: 400px;">
         <h3 style="margin-top: 0; margin-bottom: 20px; font-weight: 600; color: #0b2a4a; font-size: 18px;">Edit Harga</h3>
         <form method="POST">
-            <label style="display: block; font-weight: 500; color: #0b2a4a; margin-bottom: 5px; font-size: 14px;">Pilih Layanan</label>
+            <label style="display: block; font-weight: 500; color: #1a3f6b; margin-bottom: 5px; font-size: 13px;">Pilih Layanan</label>
             <select name="id_layanan_hidden" id="editLayananSelect" required onchange="loadLayananData()" style="
                 width: 100%;
-                padding: 8px 12px;
-                border: 1px solid #dce8f5;
-                border-radius: 4px;
+                padding: 9px 12px;
+                border: 2px solid #e5e7eb;
+                border-radius: 10px;
                 margin-bottom: 15px;
                 font-size: 14px;
                 background: white;
+                font-family: inherit;
             ">
                 <option value="">-- Pilih Layanan --</option>
                 <?php 
@@ -281,7 +237,7 @@ require __DIR__ . '/../includes/header.php';
                 <?php endwhile; ?>
             </select>
             
-            <div style="background: #f8faff; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
+            <div style="background: rgba(248,250,255,0.5); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                     <span style="color: #6b7f8f;">Layanan</span>
                     <span id="displayNama" style="font-weight: 500; color: #0b2a4a;">-</span>
@@ -292,41 +248,22 @@ require __DIR__ . '/../includes/header.php';
                 </div>
             </div>
             
-            <label style="display: block; font-weight: 500; color: #0b2a4a; margin-bottom: 5px; font-size: 14px;">Harga Baru (Rp)</label>
+            <label style="display: block; font-weight: 500; color: #1a3f6b; margin-bottom: 5px; font-size: 13px;">Harga Baru (Rp)</label>
             <input type="number" name="harga_kg_edit" id="editHarga" required min="0" step="500" style="
                 width: 100%;
-                padding: 8px 12px;
-                border: 1px solid #dce8f5;
-                border-radius: 4px;
+                padding: 9px 12px;
+                border: 2px solid #e5e7eb;
+                border-radius: 10px;
                 margin-bottom: 20px;
                 font-size: 14px;
+                font-family: inherit;
             ">
             
             <input type="hidden" name="id_layanan_hidden" id="editId">
             
             <div style="display: flex; gap: 10px; justify-content: flex-end; border-top: 1px solid #e9eff6; padding-top: 20px;">
-                <button type="button" onclick="tutupModal('modalEditLayanan')" style="
-                    padding: 8px 20px;
-                    font-size: 13px;
-                    background: #ef4444;
-                    color: white;
-                    border: none;
-                    border-radius: 4px;
-                    cursor: pointer;
-                ">
-                    Batal
-                </button>
-                <button type="submit" name="edit_layanan" style="
-                    padding: 8px 20px;
-                    font-size: 13px;
-                    background: #22c55e;
-                    color: white;
-                    border: none;
-                    border-radius: 4px;
-                    cursor: pointer;
-                ">
-                    Simpan
-                </button>
+                <button type="button" class="btn btn-danger" onclick="tutupModal('modalEditLayanan')">Batal</button>
+                <button type="submit" name="edit_layanan" class="btn btn-warning">Update</button>
             </div>
         </form>
     </div>
@@ -349,6 +286,30 @@ function loadLayananData() {
         document.getElementById('editId').value = '';
     }
 }
+
+// ===== NAVBAR SCROLL EFFECT =====
+const headerWrapper = document.getElementById('headerWrapper');
+window.addEventListener('scroll', function() {
+    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+    if (currentScroll > 50) {
+        headerWrapper.classList.add('scrolled');
+    } else {
+        headerWrapper.classList.remove('scrolled');
+    }
+});
+
+// ===== SCROLL ANIMATION =====
+document.addEventListener('DOMContentLoaded', function() {
+    const elements = document.querySelectorAll('.scroll-animate');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    elements.forEach(el => observer.observe(el));
+});
 
 <?php
 if(isset($_GET['msg'])) {

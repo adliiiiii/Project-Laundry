@@ -17,6 +17,11 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px;
+    background-image: url("https://img.freepik.com/premium-photo/clean-laundry-room-with-modern-appliances-open-shelving-minimalist-laundry-room-mockup-with-modern-appliances-clean-open-shelving_1230253-13806.jpg");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .container {

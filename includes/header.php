@@ -1,14 +1,9 @@
 <?php
-// header.php — include di setiap halaman
 session_start();
-
-// Cek login
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
 }
-
-// $pageTitle dan $activePage harus di-set sebelum include
 if (!isset($pageTitle)) $pageTitle = 'White Clean';
 if (!isset($activePage)) $activePage = '';
 ?>
@@ -19,82 +14,45 @@ if (!isset($activePage)) $activePage = '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle) ?> — White Clean</title>
     <link rel="stylesheet" href="<?= $basePath ?>style/style.css">
-    <style>
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-left: auto;
-        }
-        
-        .user-info .user-badge {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(255,255,255,0.15);
-            padding: 6px 16px 6px 12px;
-            border-radius: 30px;
-            backdrop-filter: blur(4px);
-        }
-        
-        .user-info .user-badge .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: 600;
-            color: #fff;
-        }
-        
-        .user-info .user-badge .user-detail {
-            color: #fff;
-            line-height: 1.2;
-        }
-        
-        .user-info .user-badge .user-detail .name {
-            font-size: 14px;
-            font-weight: 600;
-        }
-        
-        .user-info .btn-logout {
-            background: rgba(255,255,255,0.15);
-            color: #fff;
-            padding: 6px 16px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .user-info .btn-logout:hover {
-            background: rgba(255,255,255,0.25);
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+
+<!-- ===== BACKGROUND FULL ===== -->
+<div class="background-wrapper">
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+</div>
+
 <div class="container">
-    <div class="header">
-        <h1>🧺 White Clean</h1>
-        <div class="user-info">
-            <div class="user-badge">
-                <div class="avatar"><?= strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)) ?></div>
-                <div class="user-detail">
-                    <div class="name"><?= htmlspecialchars($_SESSION['username'] ?? 'User') ?></div>
+    <!-- ===== HEADER ===== -->
+    <div class="header-wrapper" id="headerWrapper">
+        <div class="header-content">
+            <div class="header-left">
+                <span class="icon">🧺</span>
+                <div>
+                    <h1>White Clean</h1>
+                    <span>★ Laundry Handal &amp; Terpercaya</span>
                 </div>
             </div>
-            <a href="<?= $basePath ?>logout.php" class="btn-logout" onclick="return confirm('Yakin ingin logout?')">🚪 Keluar</a>
+            <div class="header-right">
+                <div class="user-badge">
+                    <div class="avatar"><?= strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)) ?></div>
+                    <span class="name">admin</span>
+                </div>
+                <a href="<?= $basePath ?>logout.php" class="btn-logout" onclick="return confirm('Yakin logout?')">Keluar</a>
+            </div>
         </div>
+
+        <!-- NAV -->
+        <nav class="nav" id="mainNav">
+            <a href="#hero-section" class="nav-link active" data-section="hero">Dashboard</a>
+            <a href="#pesanan-section" class="nav-link" data-section="pesanan">Pesanan</a>
+            <a href="#customer-section" class="nav-link" data-section="customer">Customer</a>
+            <a href="#kurir-section" class="nav-link" data-section="kurir">Kurir</a>
+            <a href="#layanan-section" class="nav-link" data-section="layanan">Layanan</a>
+        </nav>
     </div>
-    <nav class="nav">
-        <a href="<?= $basePath ?>index.php" class="<?= $activePage=='dashboard' ? 'active' : '' ?>">📊 Dashboard</a>
-        <a href="<?= $basePath ?>process/pesanan.php" class="<?= $activePage=='pesanan' ? 'active' : '' ?>">📋 Pesanan</a>
-        <a href="<?= $basePath ?>process/customer.php" class="<?= $activePage=='customer' ? 'active' : '' ?>">👤 Customer</a>
-        <a href="<?= $basePath ?>process/kurir.php" class="<?= $activePage=='kurir' ? 'active' : '' ?>">🛵 Kurir</a>
-        <a href="<?= $basePath ?>process/layanan.php" class="<?= $activePage=='layanan' ? 'active' : '' ?>">🧺 Layanan</a>
-    </nav>

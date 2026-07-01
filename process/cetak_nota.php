@@ -1,5 +1,5 @@
 <?php
-$host = 'localhost'; $user = 'root'; $pass = ''; $db = 'laundry_web2';
+$host = 'localhost'; $user = 'root'; $pass = ''; $db = 'laundry_web';
 $conn = new mysqli($host, $user, $pass, $db);
 if (!isset($_GET['id'])) die("ID transaksi tidak ditemukan.");
 $id = intval($_GET['id']);

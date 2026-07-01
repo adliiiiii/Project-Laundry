@@ -4,7 +4,7 @@ require __DIR__ . '/../databases/config.php';
 // TAMBAH PESANAN
 if (isset($_POST['tambah_transaksi'])) {
     $id_customer = (int)$_POST['id_customer'];
-    $id_layanan  = (int)$_POST['id_layanan']; // Ambil ID layanan dari database
+    $id_layanan  = (int)$_POST['id_layanan'];
     $berat       = (float)$_POST['berat'];
     $metode      = $_POST['metode_pengambilan'];
     
@@ -16,7 +16,6 @@ if (isset($_POST['tambah_transaksi'])) {
     
     $biaya_layanan = ($metode == 'Kurir') ? 5000 : 0;
     
-    // AMBIL HARGA DARI DATABASE
     $q = $conn->query("SELECT harga_kg, satuan FROM layanan WHERE id_layanan = $id_layanan");
     if ($q->num_rows == 0) {
         die("Layanan tidak ditemukan!");
@@ -25,11 +24,10 @@ if (isset($_POST['tambah_transaksi'])) {
     $harga_kg = $layanan_data['harga_kg'];
     $satuan = $layanan_data['satuan'];
     
-    // CEK APAKAH PER SATUAN
-    $per_item = in_array($satuan, ['per potong', 'per pasang']);
+    $per_item = in_array($satuan, ['potong', 'pasang']);
     
     if ($per_item) {
-        $berat = 1; // Force berat = 1 untuk item satuan
+        $berat = 1;
         $subtotal = $harga_kg;
     } else {
         $subtotal = $berat * $harga_kg;
@@ -37,38 +35,20 @@ if (isset($_POST['tambah_transaksi'])) {
     
     $total = $subtotal + $biaya_layanan;
     
-    // AMBIL KARYAWAN
     $row = $conn->query("SELECT id_karyawan FROM karyawan LIMIT 1")->fetch_assoc();
     $id_karyawan = $row['id_karyawan'];
     
     $status_kurir = ($metode == 'Kurir') ? 'Kurir Menuju Rumah' : 'Selesai Diterima';
     $tgl = date('Y-m-d');
     
-    // INSERT TRANSAKSI (TANPA MENAMBAH LAYANAN)
     $sql = "INSERT INTO transaksi (
-        id_customer,
-        id_karyawan,
-        id_kurir,
-        id_layanan,
-        tanggal_masuk,
-        berat,
-        total_harga,
-        status_laundry,
-        status_kurir,
-        metode_pengambilan,
-        biaya_layanan
+        id_customer, id_karyawan, id_kurir, id_layanan,
+        tanggal_masuk, berat, total_harga, status_laundry,
+        status_kurir, metode_pengambilan, biaya_layanan
     ) VALUES (
-        $id_customer,
-        $id_karyawan,
-        $id_kurir,
-        $id_layanan,
-        '$tgl',
-        $berat,
-        $total,
-        'Proses',
-        '$status_kurir',
-        '$metode',
-        $biaya_layanan
+        $id_customer, $id_karyawan, $id_kurir, $id_layanan,
+        '$tgl', $berat, $total, 'Proses',
+        '$status_kurir', '$metode', $biaya_layanan
     )";
     
     if (!$conn->query($sql)) {
@@ -110,10 +90,17 @@ $basePath   = '../';
 require __DIR__ . '/../includes/header.php';
 ?>
 
-<!-- DAFTAR PESANAN -->
-<div class="panel">
+<!-- ===== HERO SECTION ===== -->
+<div class="hero-section scroll-animate">
+    <div class="badge">📋 Pesanan</div>
+    <h2>Kelola Pesanan</h2>
+    <p>Kelola semua transaksi laundry White Clean dengan mudah</p>
+</div>
+
+<!-- ===== PANEL PESANAN ===== -->
+<div class="panel scroll-animate">
     <div class="panel-header">
-        <h2>📋 Daftar Pesanan</h2>
+        <h3>📋 Daftar Pesanan</h3>
         <button class="btn btn-primary" onclick="bukaModal('modalTransaksi')">+ Tambah Pesanan</button>
     </div>
     <div class="table-responsive">
@@ -138,7 +125,6 @@ require __DIR__ . '/../includes/header.php';
             <?php if ($transaksi->num_rows > 0): while($t=$transaksi->fetch_assoc()):
                 $status = $t['status_laundry'];
                 $badge = 'status-antrean';
-                
                 if (in_array($status, ['Sedang Dicuci', 'Sedang Dijemur', 'Sedang Disetrika'])) {
                     $badge = 'status-proses';
                 } elseif ($status == 'Selesai Di-packing') {
@@ -147,24 +133,24 @@ require __DIR__ . '/../includes/header.php';
             ?>
                 <tr>
                     <td><strong>LDR-<?= $t['id_transaksi'] ?></strong></td>
-                    <td><?= $t['nama_customer'] ?? '-' ?></td>
-                    <td><?= $t['nama_kurir'] ?? '-' ?></td>
-                    <td><?= $t['metode_pengambilan'] ?></td>
+                    <td><?= htmlspecialchars($t['nama_customer'] ?? '-') ?></td>
+                    <td><?= htmlspecialchars($t['nama_kurir'] ?? '-') ?></td>
+                    <td><?= htmlspecialchars($t['metode_pengambilan']) ?></td>
                     <td><?= number_format($t['berat'], 2) ?> Kg</td>
-                    <td><?= $t['nama_layanan'] ?></td>
+                    <td><?= htmlspecialchars($t['nama_layanan']) ?></td>
                     <td>Rp <?= number_format($t['total_harga'] - $t['biaya_layanan'], 0, ',', '.') ?></td>
                     <td>Rp <?= number_format($t['biaya_layanan'], 0, ',', '.') ?></td>
                     <td><strong>Rp <?= number_format($t['total_harga'], 0, ',', '.') ?></strong></td>
                     <td><?= date('d/m/Y', strtotime($t['tanggal_masuk'])) ?></td>   
-                    <td><span class="status-badge <?= $badge ?>"><?= $status ?></span></td>
+                    <td><span class="status-badge <?= $badge ?>"><?= htmlspecialchars($status) ?></span></td>
                     <td style="white-space:nowrap;">
                         <?php if ($status == 'Proses'): ?>
                             <a href="?action=update_laundry&id=<?= $t['id_transaksi'] ?>&status=Selesai"
-                               class="btn btn-primary btn-sm">
+                               class="btn btn-success btn-sm">
                                Selesai
                             </a>
                         <?php else: ?>
-                            <span class="btn btn-success btn-sm">✓ Selesai</span>
+                            <span class="btn btn-success btn-sm" style="cursor:default;">✓ Selesai</span>
                         <?php endif; ?>
                         
                         <a href="?action=delete&id=<?= $t['id_transaksi'] ?>"
@@ -202,7 +188,7 @@ require __DIR__ . '/../includes/header.php';
                 ?>
                     <option value="<?= $c['id_customer'] ?>">
                         <?= htmlspecialchars($c['nama_customer']) ?> 
-                        (<?= $c['no_telp'] ?? '-' ?>)
+                        (<?= htmlspecialchars($c['no_telp'] ?? '-') ?>)
                     </option>
                 <?php endwhile; ?>
             </select>
@@ -223,13 +209,13 @@ require __DIR__ . '/../includes/header.php';
                     <option value="<?= $l['id_layanan'] ?>">
                         <?= htmlspecialchars($l['nama_layanan']) ?> 
                         — Rp <?= number_format($l['harga_kg'], 0, ',', '.') ?> 
-                        (<?= $l['satuan'] ?>)
+                        (<?= htmlspecialchars($l['satuan']) ?>)
                     </option>
                 <?php endwhile; ?>
                 </optgroup>
             </select>
             
-            <label>Berat (Kg) <small style="font-weight:400; color:#4a6b8a;">(abaikan untuk paket satuan)</small></label>
+            <label>Berat (Kg) <small style="font-weight:400; color:#6b7f8f;">(abaikan untuk paket satuan)</small></label>
             <input type="number" name="berat" step="0.5" min="0" placeholder="Contoh: 2.5" value="1">
             
             <label>Metode Pengambilan</label>
@@ -248,7 +234,7 @@ require __DIR__ . '/../includes/header.php';
                     ?>
                         <option value="<?= $k['id_kurir'] ?>">
                             <?= htmlspecialchars($k['nama_kurir']) ?> 
-                            (<?= $k['no_hp'] ?? '-' ?>)
+                            (<?= htmlspecialchars($k['no_hp'] ?? '-') ?>)
                         </option>
                     <?php endwhile; ?>
                 </select>
@@ -277,6 +263,30 @@ function toggleKurir() {
 }
 
 document.addEventListener('DOMContentLoaded', toggleKurir);
+
+// ===== NAVBAR SCROLL EFFECT =====
+const headerWrapper = document.getElementById('headerWrapper');
+window.addEventListener('scroll', function() {
+    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+    if (currentScroll > 50) {
+        headerWrapper.classList.add('scrolled');
+    } else {
+        headerWrapper.classList.remove('scrolled');
+    }
+});
+
+// ===== SCROLL ANIMATION =====
+document.addEventListener('DOMContentLoaded', function() {
+    const elements = document.querySelectorAll('.scroll-animate');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    elements.forEach(el => observer.observe(el));
+});
 </script>
 
 <?php
