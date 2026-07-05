@@ -26,11 +26,42 @@ function bukaModal(id) {
 
 function tutupModal(id) {
     document.getElementById(id).classList.remove('active');
+    // Reset form jika modal adalah modalTransaksi
+    if (id === 'modalTransaksi') {
+        resetFormPesanan();
+    }
+}
+
+// Fungsi khusus untuk modal pesanan
+function tutupModalPesanan() {
+    document.getElementById('modalTransaksi').classList.remove('active');
+    resetFormPesanan();
+}
+
+// Fungsi reset form pesanan
+function resetFormPesanan() {
+    const form = document.getElementById('formTambahPesanan');
+    if (form) {
+        form.reset();
+        // Reset select ke option pertama
+        document.getElementById('selectCustomer').selectedIndex = 0;
+        document.getElementById('selectLayanan').selectedIndex = 0;
+        document.getElementById('selectKurir').selectedIndex = 0;
+        document.getElementById('inputBerat').value = 1;
+        document.getElementById('metode_pengambilan').value = 'Kurir';
+        toggleKurir();
+    }
 }
 
 document.querySelectorAll('.modal-overlay').forEach(el => {
     el.addEventListener('click', function(e) {
-        if (e.target === this) this.classList.remove('active');
+        if (e.target === this) {
+            this.classList.remove('active');
+            // Jika modal adalah modalTransaksi, reset form
+            if (this.id === 'modalTransaksi') {
+                resetFormPesanan();
+            }
+        }
     });
 });
 

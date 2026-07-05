@@ -101,6 +101,14 @@ if (isset($_POST['tambah_layanan'])) {
     exit;
 }
 
+// Hapus Layanan
+if (isset($_GET['action']) && $_GET['action'] == 'delete_layanan') {
+    $id = (int)$_GET['id'];
+    $conn->query("DELETE FROM layanan WHERE id_layanan=$id");
+    header("Location: index.php#layanan-section");
+    exit;
+}
+
 // Edit Layanan
 if (isset($_POST['edit_layanan'])) {
     $id = (int)$_POST['id_layanan_hidden'];
@@ -160,6 +168,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'update_laundry') {
     $status = $_GET['status'];
     $conn->query("UPDATE transaksi SET status_laundry='$status' WHERE id_transaksi=$id");
     header("Location: index.php#pesanan-section");
+    $conn->query($sql);
+    header("Location: index.php#pesanan-section&success=1");
     exit;
 }
 
@@ -375,33 +385,35 @@ require __DIR__ . '/includes/header.php';
             <button class="btn btn-primary" onclick="toggleLayanan(this)">Lihat Layanan</button>
             <button class="btn btn-success" onclick="bukaModal('modalTambahLayanan')">+ Tambah Layanan</button>
         </div>
-        
         <!-- Tabel Layanan - DISEMBUNYIKAN DEFAULT -->
-        <div class="table-responsive" id="layananTable" style="margin-top: 16px; display: none;">
-            <table>
-                <thead>
-                    <tr><th>Paket</th><th>Nama Layanan</th><th>Harga</th><th>Satuan</th><th>Aksi</th></tr>
-                </thead>
-                <tbody>
-                    <?php 
-                    $layanan_data->data_seek(0);
-                    if ($layanan_data->num_rows > 0): while($l=$layanan_data->fetch_assoc()): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($l['paket']) ?></td>
-                            <td><strong><?= htmlspecialchars($l['nama_layanan']) ?></strong></td>
-                            <td>Rp <?= number_format($l['harga_kg'],0,',','.') ?></td>
-                            <td><?= htmlspecialchars($l['satuan']) ?></td>
-                            <td>
-                                <button class="btn btn-warning btn-sm" 
-                                        onclick="editLayanan(<?= $l['id_layanan'] ?>, '<?= addslashes($l['nama_layanan']) ?>', <?= $l['harga_kg'] ?>)">Edit</button>
-                            </td>
-                        </tr>
-                    <?php endwhile; else: ?>
-                        <tr><td colspan="5" class="empty-msg">Belum ada layanan terdaftar.</td></tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
+<div class="table-responsive" id="layananTable" style="margin-top: 16px; display: none;">
+    <table>
+        <thead>
+            <tr><th>Paket</th><th>Nama Layanan</th><th>Harga</th><th>Satuan</th><th>Aksi</th></tr>
+        </thead>
+        <tbody>
+            <?php 
+            $layanan_data->data_seek(0);
+            if ($layanan_data->num_rows > 0): while($l=$layanan_data->fetch_assoc()): ?>
+                <tr>
+                    <td><?= htmlspecialchars($l['paket']) ?></td>
+                    <td><strong><?= htmlspecialchars($l['nama_layanan']) ?></strong></td>
+                    <td>Rp <?= number_format($l['harga_kg'],0,',','.') ?></td>
+                    <td><?= htmlspecialchars($l['satuan']) ?></td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" 
+                                onclick="editLayanan(<?= $l['id_layanan'] ?>, '<?= addslashes($l['nama_layanan']) ?>', <?= $l['harga_kg'] ?>)">Edit</button>
+                        <a href="?action=delete_layanan&id=<?= $l['id_layanan'] ?>" 
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Hapus layanan <?= htmlspecialchars($l['nama_layanan']) ?>?')">Hapus</a>
+                    </td>
+                </tr>
+            <?php endwhile; else: ?>
+                <tr><td colspan="5" class="empty-msg">Belum ada layanan terdaftar.</td></tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
     </div>
 </div>
 
@@ -413,9 +425,9 @@ require __DIR__ . '/includes/header.php';
 <div class="modal-overlay" id="modalTransaksi">
     <div class="modal-box">
         <h2>+ Tambah Pesanan</h2>
-        <form method="POST">
+        <form method="POST" id="formTambahPesanan" onreset="resetFormPesanan()">
             <label>Customer</label>
-            <select name="id_customer" required>
+            <select name="id_customer" id="selectCustomer" required>
                 <option value="">-- Pilih Customer --</option>
                 <?php 
                 $cust = $conn->query("SELECT * FROM customer ORDER BY nama_customer"); 
@@ -426,7 +438,7 @@ require __DIR__ . '/includes/header.php';
             </select>
             
             <label>Layanan</label>
-            <select name="id_layanan" required>
+            <select name="id_layanan" id="selectLayanan" required>
                 <option value="">-- Pilih Layanan --</option>
                 <?php 
                 $layanan_list = $conn->query("SELECT * FROM layanan ORDER BY paket, nama_layanan");
@@ -444,7 +456,7 @@ require __DIR__ . '/includes/header.php';
             </select>
             
             <label>Berat (Kg)</label>
-            <input type="number" name="berat" step="0.5" min="0" placeholder="Contoh: 2.5" value="1">
+            <input type="number" name="berat" id="inputBerat" step="0.5" min="0" placeholder="Contoh: 2.5" value="1">
             
             <label>Metode Pengambilan</label>
             <select name="metode_pengambilan" id="metode_pengambilan" onchange="toggleKurir()" required>
@@ -454,7 +466,7 @@ require __DIR__ . '/includes/header.php';
             
             <div id="kurirField">
                 <label>Kurir</label>
-                <select name="id_kurir">
+                <select name="id_kurir" id="selectKurir">
                     <option value="">-- Pilih Kurir --</option>
                     <?php
                     $kur = $conn->query("SELECT * FROM kurir ORDER BY nama_kurir");
@@ -466,8 +478,8 @@ require __DIR__ . '/includes/header.php';
             </div>
             
             <div class="modal-actions">
-                <button type="button" class="btn btn-danger" onclick="tutupModal('modalTransaksi')">Batal</button>
-                <button type="submit" name="tambah_transaksi" class="btn btn-success">Simpan</button>
+                <button type="button" class="btn btn-danger" onclick="tutupModalPesanan()">Batal</button>
+                <button type="submit" name="tambah_transaksi" class="btn btn-success">Simpan Pesanan</button>
             </div>
         </form>
     </div>

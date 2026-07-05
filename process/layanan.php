@@ -14,6 +14,14 @@ if (isset($_POST['tambah_layanan'])) {
     exit;
 }
 
+// HAPUS LAYANAN
+if (isset($_GET['action']) && $_GET['action'] == 'delete_layanan') {
+    $id = (int)$_GET['id'];
+    $conn->query("DELETE FROM layanan WHERE id_layanan=$id");
+    header("Location: layanan.php?msg=deleted");
+    exit;
+}
+
 // EDIT LAYANAN
 if (isset($_POST['edit_layanan'])) {
     $id       = (int)$_POST['id_layanan_hidden'];
